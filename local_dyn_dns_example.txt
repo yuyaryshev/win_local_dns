@@ -1,0 +1,4 @@
+# mac_or_ip_address dns_name
+aa-bb-cc-dd-ee-ff foo
+dd-ee-ff-aa-bb-cc bar
+1.2.3.4 baz

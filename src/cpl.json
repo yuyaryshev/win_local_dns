@@ -1,0 +1,22 @@
+{
+    "00001550": {
+        "posAddr": "src/win1251/win1251.ts:28:16:4384",
+        "message": "Failed to encode string to win1251 at position ${index}, string fragmentBefore=${JSON.stringify(beforeFailedFragment)}\" failedFragment=${JSON.stringify(failedFragment)}\"\n    }",
+        "refs": []
+    },
+    "00000766": {
+        "posAddr": "src/win1251/yyaTextFile.ts:43:24:1523",
+        "message": "Unsupported encoding ${encoding || \"undefined\"}",
+        "refs": []
+    },
+    "00000767": {
+        "posAddr": "src/win1251/yyaTextFile.ts:70:24:2494",
+        "message": "Unsupported encoding ${encoding || \"undefined\"}",
+        "refs": []
+    },
+    "00001551": {
+        "posAddr": "src/upsertHosts.ts:37:18:1128",
+        "message": "hosts newContent=n",
+        "refs": []
+    }
+}

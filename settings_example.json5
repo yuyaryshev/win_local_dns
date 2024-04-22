@@ -1,0 +1,12 @@
+{
+  ddns_file_fallback: "~\\local_dyn_dns.txt",
+  minio:{
+    endPoint: 'your_minio_ip_here',
+    port: 123,
+    useSSL: false,
+    accessKey: 'your_minio_login_here',
+    secretKey: 'your_minio_secret_here',
+    bucketId: "your_minio_bucket_here",
+    objectId: "your_minio_object_id_here"
+  }
+}
