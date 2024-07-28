@@ -1,5 +1,6 @@
 import { execSync } from "child_process";
 import { bufferToString, YyaEncoding } from "./win1251/yyaTextFile";
+import { LocalDynDnsExclusion } from "./getLocalDynDns";
 export interface ArpEntry {
     arpInterface: string;
     ipAddress: string;
@@ -49,6 +50,7 @@ export function parseArpOutput(output: string): ArpEntry[] {
 export function arpLookup(
     mac: string,
     arpTable?: ArpEntry[],
+    exclusions?: LocalDynDnsExclusion[],
 ): ArpEntry | undefined {
     const macNormalized = mac.toLocaleLowerCase();
     if (!arpTable) {
@@ -56,6 +58,14 @@ export function arpLookup(
     }
     for (let rec of arpTable) {
         if (rec.macAddress.toLocaleLowerCase() === macNormalized) {
+            if (
+                exclusions &&
+                exclusions.filter((excl) =>
+                    rec.ipAddress.startsWith(excl.ippart),
+                ).length
+            ) {
+                continue;
+            }
             return rec;
         }
     }

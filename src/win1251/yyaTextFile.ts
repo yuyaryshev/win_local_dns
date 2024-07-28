@@ -1,7 +1,6 @@
 import { Buffer } from "node:buffer";
 import fs from "fs";
 import * as windows1251 from "./win1251";
-import { removeBOMprefix } from "./TsvDb";
 export type YyaEncoding = "utf-8" | "windows-1251";
 export interface YyaTextOpts {
     encoding?: YyaEncoding;

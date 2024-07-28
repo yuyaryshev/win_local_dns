@@ -2,6 +2,7 @@ import { HostsFileEntry, upsertHosts } from "./upsertHosts.js";
 import { arpLookup, ArpEntry } from "./ArpTable.js";
 import {
     getLocalDynDnsFromFile,
+    LocalDynDnsData,
     LocalDynDnsRecord,
     parseDynDnsConfig,
 } from "./getLocalDynDns.js";
@@ -10,9 +11,7 @@ import * as Minio from "minio";
 import { getMinioFileContents } from "./minio_tools";
 export async function updateHostsFromLocalDynDns() {
     const settings = readSettings();
-
-    const ddnsRecords: LocalDynDnsRecord[] = [];
-
+    let ddnsData: LocalDynDnsData | undefined;
     if (settings.minio) {
         try {
             const minioClient: Minio.Client = new Minio.Client(settings.minio!);
@@ -21,30 +20,27 @@ export async function updateHostsFromLocalDynDns() {
                 settings.minio.bucketId,
                 settings.minio.objectId,
             );
-            ddnsRecords.push(...parseDynDnsConfig(ddns_file_content));
+            ddnsData = parseDynDnsConfig(ddns_file_content);
             console.log(
-                `CODE00000000 Fetched ddns_file from minio successfully!`,
+                `CODE00000002 Fetched ddns_file from minio successfully!`,
             );
         } catch (e: any) {
+            ddnsData = undefined;
             console.warn(
-                `CODE00000000 Failed to fetch ddns_file file from minio!`,
+                `CODE00000003 Failed to fetch ddns_file file from minio!`,
                 e,
             );
         }
     }
-
-    if (!ddnsRecords.length) {
-        ddnsRecords.push(
-            ...getLocalDynDnsFromFile(
-                settings.ddns_file_fallback || "local_dyn_dns.txt",
-            ),
+    if (!ddnsData) {
+        ddnsData = getLocalDynDnsFromFile(
+            settings.ddns_file_fallback || "local_dyn_dns.txt",
         );
     }
-
     const hostsUpdates: HostsFileEntry[] = [];
-    for (let record of ddnsRecords) {
+    for (let record of ddnsData.items) {
         const arpEntry: ArpEntry | undefined = record.mac
-            ? arpLookup(record.mac)
+            ? arpLookup(record.mac, undefined, ddnsData.exclusions)
             : undefined;
         const hostsFileEntry: HostsFileEntry = {
             ip: record.ip || arpEntry?.ipAddress || "",
