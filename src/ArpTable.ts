@@ -1,12 +1,14 @@
 import { execSync } from "child_process";
 import { bufferToString, YyaEncoding } from "./win1251/yyaTextFile";
 import { LocalDynDnsExclusion } from "./getLocalDynDns";
+
 export interface ArpEntry {
     arpInterface: string;
     ipAddress: string;
     macAddress: string;
     type: string;
 }
+
 export function getArpTable(): ArpEntry[] {
     try {
         const arpOutputBuffer = execSync("chcp 65001 && arp -a");
@@ -18,6 +20,7 @@ export function getArpTable(): ArpEntry[] {
         throw new Error(`Error retrieving ARP table: ${error}`);
     }
 }
+
 export function parseArpOutput(output: string): ArpEntry[] {
     const arpEntries: ArpEntry[] = [];
     let currentArpInterfaceIp: string | undefined;
@@ -49,6 +52,7 @@ export function parseArpOutput(output: string): ArpEntry[] {
 }
 export function arpLookup(
     mac: string,
+    allowedIpPrefix?: string,
     arpTable?: ArpEntry[],
     exclusions?: LocalDynDnsExclusion[],
 ): ArpEntry | undefined {
@@ -57,7 +61,10 @@ export function arpLookup(
         arpTable = getArpTable();
     }
     for (let rec of arpTable) {
-        if (rec.macAddress.toLocaleLowerCase() === macNormalized) {
+        if (
+            rec.macAddress.toLocaleLowerCase() === macNormalized &&
+            (!allowedIpPrefix || rec.ipAddress.startsWith(allowedIpPrefix))
+        ) {
             if (
                 exclusions &&
                 exclusions.filter((excl) =>

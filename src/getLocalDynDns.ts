@@ -4,6 +4,7 @@ export interface LocalDynDnsRecord {
     ip?: string;
     mac?: string;
     name: string;
+    allowedIpPrefix?: string;
 }
 export interface LocalDynDnsExclusion {
     ippart: string;
@@ -33,7 +34,7 @@ export function parseDynDnsConfig(content: string): LocalDynDnsData {
             });
             continue;
         }
-        const [macOrIp, name] = line.split(/\s+/);
+        const [macOrIp, name, allowedIpPrefix] = line.split(/\s+/);
         const ip = macOrIp.split(".").length === 4 ? macOrIp : undefined;
         const mac = ip ? undefined : macOrIp;
         if ((mac || ip) && name) {
@@ -41,6 +42,7 @@ export function parseDynDnsConfig(content: string): LocalDynDnsData {
                 ip,
                 mac,
                 name,
+                allowedIpPrefix,
             });
         }
     }

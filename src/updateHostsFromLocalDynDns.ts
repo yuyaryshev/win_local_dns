@@ -9,6 +9,7 @@ import {
 import { readSettings } from "./settings/readSettings";
 import * as Minio from "minio";
 import { getMinioFileContents } from "./minio_tools";
+
 export async function updateHostsFromLocalDynDns() {
     const settings = readSettings();
     let ddnsData: LocalDynDnsData | undefined;
@@ -40,7 +41,12 @@ export async function updateHostsFromLocalDynDns() {
     const hostsUpdates: HostsFileEntry[] = [];
     for (let record of ddnsData.items) {
         const arpEntry: ArpEntry | undefined = record.mac
-            ? arpLookup(record.mac, undefined, ddnsData.exclusions)
+            ? arpLookup(
+                  record.mac,
+                  record.allowedIpPrefix,
+                  undefined,
+                  ddnsData.exclusions,
+              )
             : undefined;
         const hostsFileEntry: HostsFileEntry = {
             ip: record.ip || arpEntry?.ipAddress || "",

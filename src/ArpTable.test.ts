@@ -14,7 +14,7 @@ describe("win_local_dns/getArpTable.test.ts", () => {
     });
     it("arpLookup", () => {
         const arpTable = parseArpOutput(arpOutputExample);
-        const r = arpLookup("84-5a-7d-8c-33-af", arpTable);
+        const r = arpLookup("84-5a-7d-8c-33-af", undefined, arpTable);
         expectDeepEqual(r, {
             arpInterface: "192.168.1.127",
             ipAddress: "192.168.1.57",
